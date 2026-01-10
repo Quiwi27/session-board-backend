@@ -9,6 +9,16 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 export class UserRepository {
   constructor(@InjectDb() private readonly db: DB) {}
 
+  public async findByEmail(email: string) {
+    const [user] = await this.db.select().from(userTable).where(eq(userTable.email, email));
+
+    if (!user) {
+      return null;
+    }
+
+    return user;
+  }
+
   public async findById(id: string) {
     const [user] = await this.db.select().from(userTable).where(eq(userTable.id, id));
 
