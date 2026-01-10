@@ -18,7 +18,7 @@ export class AuthService {
     const existUsers = await this.userService.findByEmail(requestDto.email);
 
     if (existUsers) {
-      this.logger.warn(`User with email ${requestDto.email} alredy exist`);
+      this.logger.warn(`User with email ${requestDto.email} already exist`);
       throw new UnableSignUpException();
     }
 

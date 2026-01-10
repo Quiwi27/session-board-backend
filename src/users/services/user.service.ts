@@ -28,7 +28,7 @@ export class UserService {
     } catch (error) {
       const dbError = error as DatabaseError;
 
-      if (dbError.constraint === 'users_email_unique') {
+      if (dbError?.constraint === 'users_email_unique') {
         throw new UserAlreadyExistException();
       }
 
