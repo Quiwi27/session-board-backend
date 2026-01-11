@@ -10,8 +10,8 @@ export class ParticipantService {
 
   constructor(private readonly participanRep: ParticipantRepository) {}
 
-  public async findByUserIdAndSessionId(userId: string, sessionId: string): Promise<ParticipantResponseDto | null> {
-    const participant = await this.participanRep.findByUserIdAndSessionId(userId, sessionId);
+  public async findByUserIdAndSessionId(userId: string, sessionId: string, tx?: TX): Promise<ParticipantResponseDto | null> {
+    const participant = await this.participanRep.findByUserIdAndSessionId(userId, sessionId, tx);
 
     if (!participant) {
       return null;
@@ -25,8 +25,8 @@ export class ParticipantService {
     };
   }
 
-  public async findCountPlayersBySessionId(sessionId: string): Promise<{ count: number }> {
-    const count = await this.participanRep.findCountBySessionIdAndRole(sessionId, 'PLAYER');
+  public async findCountPlayersBySessionId(sessionId: string, tx?: TX): Promise<{ count: number }> {
+    const count = await this.participanRep.findCountBySessionIdAndRole(sessionId, 'PLAYER', tx);
 
     return { count };
   }

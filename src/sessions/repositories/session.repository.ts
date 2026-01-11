@@ -16,8 +16,19 @@ export class SessionRepository {
     return session;
   }
 
-  public async findById(id: string) {
-    const [session] = await this.db.select().from(sessionTable).where(eq(sessionTable.id, id));
+  public async findById(id: string, tx?: TX) {
+    const transaction = tx ?? this.db;
+    const [session] = await transaction.select().from(sessionTable).where(eq(sessionTable.id, id));
+
+    if (!session) {
+      return null;
+    }
+
+    return session;
+  }
+
+  public async findByIdLock(id: string, tx: TX) {
+    const [session] = await tx.select().from(sessionTable).where(eq(sessionTable.id, id)).for('update');
 
     if (!session) {
       return null;

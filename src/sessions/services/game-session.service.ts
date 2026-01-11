@@ -42,13 +42,15 @@ export class GameSessionService {
       userId,
     };
 
-    await this.validateJoin(sessionId, userId);
+    return this.db.transaction(async (tx: TX) => {
+      await this.validateJoin(sessionId, userId, tx);
 
-    return this.participantService.join(participantJoin);
+      return this.participantService.join(participantJoin, tx);
+    });
   }
 
-  private async validateJoin(sessionId: string, userId: string): Promise<void> {
-    const session = await this.sessionService.findById(sessionId);
+  private async validateJoin(sessionId: string, userId: string, tx: TX): Promise<void> {
+    const session = await this.sessionService.findByIdLock(sessionId, tx);
 
     if (!session) {
       const message = `Session not found, sessionId: ${sessionId}`;
@@ -56,7 +58,7 @@ export class GameSessionService {
       throw new SessionNotFoundException();
     }
 
-    const participant = await this.participantService.findByUserIdAndSessionId(userId, sessionId);
+    const participant = await this.participantService.findByUserIdAndSessionId(userId, sessionId, tx);
 
     if (participant) {
       const message = `User already joined session, sessionId: ${sessionId}, userId: ${userId}`;
@@ -64,7 +66,7 @@ export class GameSessionService {
       throw new UserAleadyJoinedSessionException();
     }
 
-    const { count: playerCount } = await this.participantService.findCountPlayersBySessionId(sessionId);
+    const { count: playerCount } = await this.participantService.findCountPlayersBySessionId(sessionId, tx);
 
     if (session?.maxPlayers && playerCount >= session.maxPlayers) {
       const message = `Session is full, sessionId: ${sessionId}`;

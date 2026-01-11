@@ -16,8 +16,10 @@ export class ParticipantRepository {
     return participant;
   }
 
-  public async findByUserIdAndSessionId(userId: string, sessionId: string) {
-    const participant = await this.db.query.participantTable.findFirst({
+  public async findByUserIdAndSessionId(userId: string, sessionId: string, tx?: TX) {
+    const transaction = tx ?? this.db;
+
+    const participant = await transaction.query.participantTable.findFirst({
       where: and(eq(participantTable.userId, userId), eq(participantTable.sessionId, sessionId)),
     });
 
@@ -28,8 +30,10 @@ export class ParticipantRepository {
     return participant;
   }
 
-  public async findCountBySessionIdAndRole(sessionId: string, role: 'PLAYER' | 'MASTER'): Promise<number> {
-    const [result] = await this.db
+  public async findCountBySessionIdAndRole(sessionId: string, role: 'PLAYER' | 'MASTER', tx?: TX): Promise<number> {
+    const transaction = tx ?? this.db;
+
+    const [result] = await transaction
       .select({ value: count() })
       .from(participantTable)
       .where(and(eq(participantTable.sessionId, sessionId), eq(participantTable.role, role)));

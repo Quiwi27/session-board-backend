@@ -10,8 +10,23 @@ export class SessionService {
 
   constructor(private readonly sessionRep: SessionRepository) {}
 
-  public async findById(id: string): Promise<SessionResponseDto | null> {
-    const session = await this.sessionRep.findById(id);
+  public async findByIdLock(id: string, tx: TX): Promise<SessionResponseDto | null> {
+    const session = await this.sessionRep.findByIdLock(id, tx);
+
+    if (!session) {
+      return null;
+    }
+
+    return {
+      id: session.id,
+      startDate: session.startDate,
+      title: session.title,
+      maxPlayers: session.maxPlayers,
+    };
+  }
+
+  public async findById(id: string, tx?: TX): Promise<SessionResponseDto | null> {
+    const session = await this.sessionRep.findById(id, tx);
 
     if (!session) {
       return null;
