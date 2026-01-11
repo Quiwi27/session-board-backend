@@ -9,6 +9,27 @@ export class ParticipantService {
 
   constructor(private readonly participanRep: ParticipantRepository) {}
 
+  public async findByUserIdAndSessionId(userId: string, sessionId: string): Promise<ParticipantResponseDto | null> {
+    const participant = await this.participanRep.findByUserIdAndSessionId(userId, sessionId);
+
+    if (!participant) {
+      return null;
+    }
+
+    return {
+      id: participant.id,
+      userId: participant.userId,
+      sessionId: participant.sessionId,
+      role: participant.role,
+    };
+  }
+
+  public async findCountPlayersBySessionId(sessionId: string): Promise<{ count: number }> {
+    const count = await this.participanRep.findCountBySessionIdAndRole(sessionId, 'PLAYER');
+
+    return { count };
+  }
+
   public async join(requestDto: CreateParticipantDto): Promise<ParticipantResponseDto> {
     const participant = await this.participanRep.create(requestDto);
     this.logger.log(`Join to session. Participant: ${JSON.stringify(participant)}`);
