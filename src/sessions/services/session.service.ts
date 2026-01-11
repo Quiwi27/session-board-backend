@@ -9,6 +9,21 @@ export class SessionService {
 
   constructor(private readonly sessionRep: SessionRepository) {}
 
+  public async findById(id: string): Promise<SessionResponseDto | null> {
+    const session = await this.sessionRep.findById(id);
+
+    if (!session) {
+      return null;
+    }
+
+    return {
+      id: session.id,
+      startDate: session.startDate,
+      title: session.title,
+      maxPlayers: session.maxPlayers,
+    };
+  }
+
   public async create(sessionDto: CreateSessionRequestDto): Promise<SessionResponseDto> {
     const session = await this.sessionRep.create(sessionDto);
     this.logger.log(`Session created, session: ${JSON.stringify(session)}`);
