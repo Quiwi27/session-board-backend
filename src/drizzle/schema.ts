@@ -23,7 +23,8 @@ export const sessionTable = pgTable('sessions', {
     .defaultNow()
     .$onUpdate(() => new Date()),
   title: varchar().notNull(),
-  maxPlayers: integer(),
+  maxPlayers: integer('max_players'),
+  startDate: timestamp('start_date').notNull(),
 });
 
 export const participantTable = pgTable(
