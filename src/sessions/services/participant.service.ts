@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ParticipantRepository } from '../repositories/participant.repository';
 import { CreateParticipantDto } from '../dtos/create-participant.dto';
 import { ParticipantResponseDto } from '../dtos/responses/participant.reponse.dto';
+import { TX } from 'src/drizzle/db.client';
 
 @Injectable()
 export class ParticipantService {
@@ -30,8 +31,8 @@ export class ParticipantService {
     return { count };
   }
 
-  public async join(requestDto: CreateParticipantDto): Promise<ParticipantResponseDto> {
-    const participant = await this.participanRep.create(requestDto);
+  public async join(requestDto: CreateParticipantDto, tx?: TX): Promise<ParticipantResponseDto> {
+    const participant = await this.participanRep.create(requestDto, tx);
     this.logger.log(`Join to session. Participant: ${JSON.stringify(participant)}`);
 
     return {

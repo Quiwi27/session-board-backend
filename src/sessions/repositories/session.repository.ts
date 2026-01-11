@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { DB } from 'src/drizzle/db.client';
+import type { DB, TX } from 'src/drizzle/db.client';
 import { InjectDb } from 'src/drizzle/db.provider';
 import { CreateSessionRequestDto } from '../dtos/requests/create-session.request.dto';
 import { sessionTable } from 'src/drizzle/schema';
@@ -9,8 +9,9 @@ import { eq } from 'drizzle-orm';
 export class SessionRepository {
   constructor(@InjectDb() private readonly db: DB) {}
 
-  public async create(createSession: CreateSessionRequestDto) {
-    const [session] = await this.db.insert(sessionTable).values(createSession).returning();
+  public async create(createSession: CreateSessionRequestDto, tx?: TX) {
+    const transaction = tx ?? this.db;
+    const [session] = await transaction.insert(sessionTable).values(createSession).returning();
 
     return session;
   }

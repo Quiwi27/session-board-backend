@@ -6,6 +6,8 @@ import { CreateParticipantDto } from '../dtos/create-participant.dto';
 import { SessionResponseDto } from '../dtos/responses/session.response.dto';
 import { EnoughtCountPlayersException, SessionNotFoundException, UserAleadyJoinedSessionException } from '../exceptions';
 import { ParticipantResponseDto } from '../dtos/responses/participant.reponse.dto';
+import { InjectDb } from 'src/drizzle/db.provider';
+import type { DB, TX } from 'src/drizzle/db.client';
 
 @Injectable()
 export class GameSessionService {
@@ -14,20 +16,23 @@ export class GameSessionService {
   constructor(
     private readonly sessionService: SessionService,
     private readonly participantService: ParticipantService,
+    @InjectDb() private readonly db: DB,
   ) {}
 
   public async createSession(sessionDto: CreateSessionRequestDto): Promise<SessionResponseDto> {
-    const session = await this.sessionService.create(sessionDto);
+    return this.db.transaction(async (tx: TX) => {
+      const session = await this.sessionService.create(sessionDto, tx);
 
-    const participantJoin: CreateParticipantDto = {
-      role: 'MASTER',
-      sessionId: session.id,
-      userId: sessionDto.creatorId,
-    };
+      const participantJoin: CreateParticipantDto = {
+        role: 'MASTER',
+        sessionId: session.id,
+        userId: sessionDto.creatorId,
+      };
 
-    await this.participantService.join(participantJoin);
+      await this.participantService.join(participantJoin, tx);
 
-    return session;
+      return session;
+    });
   }
 
   public async joinSession(sessionId: string, userId: string): Promise<ParticipantResponseDto> {

@@ -9,5 +9,6 @@ const pool = new Pool({
 
 export const db: NodePgDatabase<typeof schema> = drizzle(pool, { schema, casing: 'snake_case' });
 export type DB = typeof db;
+export type TX = typeof db;
 
 export default db;

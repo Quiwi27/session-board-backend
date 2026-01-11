@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SessionRepository } from '../repositories/session.repository';
 import { CreateSessionRequestDto } from '../dtos/requests/create-session.request.dto';
 import { SessionResponseDto } from '../dtos/responses/session.response.dto';
+import { TX } from 'src/drizzle/db.client';
 
 @Injectable()
 export class SessionService {
@@ -24,8 +25,8 @@ export class SessionService {
     };
   }
 
-  public async create(sessionDto: CreateSessionRequestDto): Promise<SessionResponseDto> {
-    const session = await this.sessionRep.create(sessionDto);
+  public async create(sessionDto: CreateSessionRequestDto, tx?: TX): Promise<SessionResponseDto> {
+    const session = await this.sessionRep.create(sessionDto, tx);
     this.logger.log(`Session created, session: ${JSON.stringify(session)}`);
 
     return {
