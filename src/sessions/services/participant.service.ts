@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ParticipantRepository } from '../repositories/participant.repository';
-import { CreateParticipantRequestDto } from '../dtos/create-participant.dto';
+import { CreateParticipantDto } from '../dtos/create-participant.dto';
 import { ParticipantResponseDto } from '../dtos/responses/participant.reponse.dto';
 
 @Injectable()
 export class ParticipantService {
   private readonly logger = new Logger(ParticipantService.name);
 
-  constructor(private readonly participanRep: ParticipantRepository) {}
+  constructor(private readonly participanRep: ParticipantRepository) { }
 
-  public async join(requestDto: CreateParticipantRequestDto): Promise<ParticipantResponseDto> {
+  public async join(requestDto: CreateParticipantDto): Promise<ParticipantResponseDto> {
     const participant = await this.participanRep.create(requestDto);
     this.logger.log(`Join to session. Participant: ${JSON.stringify(participant)}`);
 
