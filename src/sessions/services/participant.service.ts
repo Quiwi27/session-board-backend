@@ -7,7 +7,7 @@ import { ParticipantResponseDto } from '../dtos/responses/participant.reponse.dt
 export class ParticipantService {
   private readonly logger = new Logger(ParticipantService.name);
 
-  constructor(private readonly participanRep: ParticipantRepository) { }
+  constructor(private readonly participanRep: ParticipantRepository) {}
 
   public async join(requestDto: CreateParticipantDto): Promise<ParticipantResponseDto> {
     const participant = await this.participanRep.create(requestDto);

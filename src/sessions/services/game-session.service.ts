@@ -10,7 +10,7 @@ export class GameSessionService {
   constructor(
     private readonly sessionService: SessionService,
     private readonly participantService: ParticipantService,
-  ) { }
+  ) {}
 
   public async createSession(sessionDto: CreateSessionRequestDto): Promise<SessionResponseDto> {
     const session = await this.sessionService.create(sessionDto);

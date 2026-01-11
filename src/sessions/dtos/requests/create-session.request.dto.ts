@@ -16,3 +16,16 @@ export class CreateSessionRequestDto {
   @IsUUID()
   public creatorId: string;
 }
+
+export class CreateSessionOmitCreatorRequestDto {
+  @IsDate()
+  @Type(() => Date)
+  public startDate: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  public title: string;
+
+  @IsNumber()
+  public maxPlayers: number;
+}
