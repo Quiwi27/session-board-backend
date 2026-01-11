@@ -21,6 +21,12 @@ async function bootstrap() {
     .setDescription('The Session board API description')
     .setVersion('1.0')
     .addTag('session-board')
+    .addSecurity('AccessToken', {
+      type: 'apiKey',
+      in: 'header',
+      name: 'Authorization',
+    })
+    .addSecurityRequirements('AccessToken')
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
