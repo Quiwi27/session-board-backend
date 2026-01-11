@@ -4,6 +4,7 @@ import { CreateUserDto } from '../dtos/create-user.dto';
 import { UserResponseDto } from '../dtos/user.response.dto';
 import { UserAlreadyExistException } from '../exceptions/user-already-exist.exception';
 import { DatabaseError } from 'pg';
+import { UserFullResponseDto } from '../dtos/user-full.response.dto';
 
 @Injectable()
 export class UserService {
@@ -11,7 +12,7 @@ export class UserService {
 
   constructor(private readonly userRep: UserRepository) {}
 
-  public async findByEmail(email: string): Promise<UserResponseDto | null> {
+  public async findByEmail(email: string): Promise<UserFullResponseDto | null> {
     return this.userRep.findByEmail(email);
   }
 
