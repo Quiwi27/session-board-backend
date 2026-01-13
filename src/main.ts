@@ -2,9 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
 
   app.enableVersioning({
     type: VersioningType.URI,
@@ -21,12 +24,7 @@ async function bootstrap() {
     .setDescription('The Session board API description')
     .setVersion('1.0')
     .addTag('session-board')
-    .addSecurity('AccessToken', {
-      type: 'apiKey',
-      in: 'header',
-      name: 'Authorization',
-    })
-    .addSecurityRequirements('AccessToken')
+    .addCookieAuth('accessToken')
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

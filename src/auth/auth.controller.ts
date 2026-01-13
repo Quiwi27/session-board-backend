@@ -1,11 +1,13 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { SignUpRequestDto } from './dtos/sign-up.request.dto';
 import { SignUpResponseDto } from './dtos/sign-up.response.dto';
 import { AuthService } from './services/auth.service';
 import { Public } from './decorators/public.decorator';
 import { SignInRequestDto } from './dtos/sign-in.request.dto';
-import { SignInResponseDto } from './dtos/sign-in.response.dto';
+import { type Response } from 'express';
+import { ApiCookieAuth } from '@nestjs/swagger';
 
+@ApiCookieAuth()
 @Controller({
   version: '1',
   path: 'auth',
@@ -15,8 +17,13 @@ export class AuthController {
 
   @Post('sign-in')
   @Public()
-  public async singIn(@Body() requestDto: SignInRequestDto): Promise<SignInResponseDto> {
-    return this.authService.singIn(requestDto);
+  public async singIn(@Body() requestDto: SignInRequestDto, @Res({ passthrough: true }) res: Response): Promise<void> {
+    const { accessToken } = await this.authService.singIn(requestDto);
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: true,
+    });
   }
 
   @Post('sign-up')

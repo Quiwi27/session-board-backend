@@ -5,7 +5,9 @@ import { SessionResponseDto } from '../dtos/responses/session.response.dto';
 import { GetDecodedUser } from 'src/auth/decorators/get-decoded-user.decorator';
 import { DecodedJwtUserDto } from 'src/auth/dtos/decoded-jwt-user.dto';
 import { ParticipantResponseDto } from '../dtos/responses/participant.reponse.dto';
+import { ApiCookieAuth } from '@nestjs/swagger';
 
+@ApiCookieAuth()
 @Controller({
   version: '1',
   path: 'game-sessions',
