@@ -6,9 +6,10 @@ import { ParticipantService } from './services/participant.service';
 import { GameSessionService } from './services/game-session.service';
 import { GameSessionConroller } from './controllers/game-session.controller';
 import { DbModule } from 'src/drizzle/db.module';
+import { PaginationModule } from 'src/pagination/pagination.module';
 
 @Module({
-  imports: [DbModule],
+  imports: [DbModule, PaginationModule],
   controllers: [GameSessionConroller],
   providers: [SessionRepository, ParticipantRepository, SessionService, ParticipantService, GameSessionService],
   exports: [SessionService],

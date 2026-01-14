@@ -8,6 +8,8 @@ import { EnoughtCountPlayersException, SessionNotFoundException, UserAleadyJoine
 import { ParticipantResponseDto } from '../dtos/responses/participant.reponse.dto';
 import { InjectDb } from 'src/drizzle/db.provider';
 import type { DB, TX } from 'src/drizzle/db.client';
+import { PageDto } from 'src/pagination/dtos/page.dto';
+import { PaginableRequestDto } from 'src/pagination/dtos/paginable.request.dto';
 
 @Injectable()
 export class GameSessionService {
@@ -18,6 +20,10 @@ export class GameSessionService {
     private readonly participantService: ParticipantService,
     @InjectDb() private readonly db: DB,
   ) {}
+
+  public async findAll(requestDto: PaginableRequestDto): Promise<PageDto<SessionResponseDto>> {
+    return this.sessionService.findAll(requestDto);
+  }
 
   public async createSession(sessionDto: CreateSessionRequestDto): Promise<SessionResponseDto> {
     return this.db.transaction(async (tx: TX) => {

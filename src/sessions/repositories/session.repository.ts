@@ -3,11 +3,28 @@ import type { DB, TX } from 'src/drizzle/db.client';
 import { InjectDb } from 'src/drizzle/db.provider';
 import { CreateSessionRequestDto } from '../dtos/requests/create-session.request.dto';
 import { sessionTable } from 'src/drizzle/schema';
-import { eq } from 'drizzle-orm';
+import { count, desc, eq } from 'drizzle-orm';
 
 @Injectable()
 export class SessionRepository {
   constructor(@InjectDb() private readonly db: DB) {}
+
+  public async findAll(skip: number, limit: number) {
+    const sessions = await this.db
+      .select()
+      .from(sessionTable)
+      .offset(skip)
+      .limit(limit)
+      .orderBy(desc(sessionTable.createdAt), desc(sessionTable.startDate));
+
+    return sessions;
+  }
+
+  public async findTotalCount() {
+    const [result] = await this.db.select({ value: count() }).from(sessionTable);
+
+    return result.value;
+  }
 
   public async create(createSession: CreateSessionRequestDto, tx?: TX) {
     const transaction = tx ?? this.db;
