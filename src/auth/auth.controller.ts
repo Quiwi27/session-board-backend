@@ -27,6 +27,11 @@ export class AuthController {
     });
   }
 
+  @Post('logout')
+  public logout(@Res({ passthrough: true }) res: Response): void {
+    res.clearCookie('accessToken');
+  }
+
   @Post('sign-up')
   @Public()
   public async signUp(@Body() requestDto: SignUpRequestDto): Promise<SignUpResponseDto> {
