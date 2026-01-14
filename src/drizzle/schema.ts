@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { pgEnum, uniqueIndex } from 'drizzle-orm/pg-core';
 import { pgTable, timestamp, uuid, varchar, integer } from 'drizzle-orm/pg-core';
 
@@ -46,3 +47,28 @@ export const participantTable = pgTable(
   },
   (t) => [uniqueIndex('uniq_participant').on(t.sessionId, t.userId)],
 );
+
+export const sessionRelations = relations(sessionTable, ({ many }) => ({
+  participants: many(participantTable, {
+    relationName: 'sessionParticipants',
+  }),
+}));
+
+export const participantRelations = relations(participantTable, ({ one }) => ({
+  session: one(sessionTable, {
+    fields: [participantTable.sessionId],
+    references: [sessionTable.id],
+    relationName: 'sessionParticipants',
+  }),
+  user: one(userTable, {
+    fields: [participantTable.userId],
+    references: [userTable.id],
+    relationName: 'userParticipants',
+  }),
+}));
+
+export const userRelations = relations(userTable, ({ many }) => ({
+  participants: many(participantTable, {
+    relationName: 'userParticipants',
+  }),
+}));
