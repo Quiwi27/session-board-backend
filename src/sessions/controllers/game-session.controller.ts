@@ -8,6 +8,7 @@ import { ParticipantResponseDto } from '../dtos/responses/participant.reponse.dt
 import { ApiCookieAuth } from '@nestjs/swagger';
 import { PaginableRequestDto } from 'src/pagination/dtos/paginable.request.dto';
 import { PageDto } from 'src/pagination/dtos/page.dto';
+import { DashboardSessionResponseDto } from '../dtos/responses/dashboard-session.response.dto';
 
 @ApiCookieAuth()
 @Controller({
@@ -18,7 +19,7 @@ export class GameSessionConroller {
   constructor(private readonly gameSessionService: GameSessionService) {}
 
   @Get()
-  public async findAll(@Query() paginableRequestDto: PaginableRequestDto): Promise<PageDto<SessionResponseDto>> {
+  public async findAll(@Query() paginableRequestDto: PaginableRequestDto): Promise<PageDto<DashboardSessionResponseDto>> {
     return this.gameSessionService.findAll(paginableRequestDto);
   }
 

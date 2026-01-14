@@ -10,6 +10,7 @@ import { InjectDb } from 'src/drizzle/db.provider';
 import type { DB, TX } from 'src/drizzle/db.client';
 import { PageDto } from 'src/pagination/dtos/page.dto';
 import { PaginableRequestDto } from 'src/pagination/dtos/paginable.request.dto';
+import { DashboardSessionResponseDto } from '../dtos/responses/dashboard-session.response.dto';
 
 @Injectable()
 export class GameSessionService {
@@ -21,7 +22,7 @@ export class GameSessionService {
     @InjectDb() private readonly db: DB,
   ) {}
 
-  public async findAll(requestDto: PaginableRequestDto): Promise<PageDto<SessionResponseDto>> {
+  public async findAll(requestDto: PaginableRequestDto): Promise<PageDto<DashboardSessionResponseDto>> {
     return this.sessionService.findAll(requestDto);
   }
 

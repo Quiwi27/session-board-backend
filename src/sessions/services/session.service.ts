@@ -6,6 +6,7 @@ import { TX } from 'src/drizzle/db.client';
 import { PaginableRequestDto } from 'src/pagination/dtos/paginable.request.dto';
 import { PageDto } from 'src/pagination/dtos/page.dto';
 import { PaginationService } from 'src/pagination/services/pagination.service';
+import { DashboardSessionResponseDto } from '../dtos/responses/dashboard-session.response.dto';
 
 @Injectable()
 export class SessionService {
@@ -16,7 +17,7 @@ export class SessionService {
     private readonly paginationService: PaginationService,
   ) {}
 
-  public async findAll(requestDto: PaginableRequestDto): Promise<PageDto<SessionResponseDto>> {
+  public async findAll(requestDto: PaginableRequestDto): Promise<PageDto<DashboardSessionResponseDto>> {
     const skip = this.paginationService.getSkip(requestDto);
     const limit = requestDto.limit ?? 10;
 
@@ -24,7 +25,29 @@ export class SessionService {
     const findTotalCountPromise = this.sessionRep.findTotalCount();
     const [sessions, totalCount] = await Promise.all([findAllPromise, findTotalCountPromise]);
 
-    return this.paginationService.create(sessions, requestDto, totalCount);
+    const dtos = sessions.map((session) => {
+      const playerCount = session.participants.length;
+      const masterUser = session.participants.find((participant) => participant.role === 'MASTER')?.user;
+
+      const master = masterUser
+        ? {
+            id: masterUser.id,
+            name: masterUser.name,
+            email: masterUser.email,
+          }
+        : null;
+
+      return {
+        id: session.id,
+        startDate: session.startDate,
+        title: session.title,
+        maxPlayers: session.maxPlayers,
+        playerCount,
+        master,
+      };
+    });
+
+    return this.paginationService.create(dtos, requestDto, totalCount);
   }
 
   public async findByIdLock(id: string, tx: TX): Promise<SessionResponseDto | null> {

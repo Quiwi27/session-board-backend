@@ -3,19 +3,25 @@ import type { DB, TX } from 'src/drizzle/db.client';
 import { InjectDb } from 'src/drizzle/db.provider';
 import { CreateSessionRequestDto } from '../dtos/requests/create-session.request.dto';
 import { sessionTable } from 'src/drizzle/schema';
-import { count, desc, eq } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 
 @Injectable()
 export class SessionRepository {
   constructor(@InjectDb() private readonly db: DB) {}
 
   public async findAll(skip: number, limit: number) {
-    const sessions = await this.db
-      .select()
-      .from(sessionTable)
-      .offset(skip)
-      .limit(limit)
-      .orderBy(desc(sessionTable.createdAt), desc(sessionTable.startDate));
+    const sessions = await this.db.query.sessionTable.findMany({
+      with: {
+        participants: {
+          with: {
+            user: true,
+          },
+        },
+      },
+      offset: skip,
+      limit,
+      orderBy: (s, { desc }) => [desc(s.createdAt), desc(s.id)],
+    });
 
     return sessions;
   }
