@@ -1,19 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { PageMetaDto } from '../dtos/page-meta.dto';
 import { PageDto } from '../dtos/page.dto';
+import { PaginableRequestDto } from '../dtos/paginable.request.dto';
 
 @Injectable()
 export class PaginationService {
-  public getSkip(page: number, limit: number): number {
+  public getSkip(paginableRequestDto: PaginableRequestDto): number {
+    const { page = 1, limit = 10 } = paginableRequestDto;
+
     return (page - 1) * limit;
   }
 
-  public create<T>(entities: T[], page: number, limit: number): PageDto<T> {
-    const totalItemCount = entities.length;
+  public create<T>(entities: T[], paginableRequestDto: PaginableRequestDto, totalItemCount: number): PageDto<T> {
+    const { page = 1, limit = 10 } = paginableRequestDto;
     const meta = this.getPageMeta(page, limit, totalItemCount);
-    const paginatedEntities = entities.slice(this.getSkip(page, limit), this.getSkip(page, limit) + limit);
 
-    return { items: paginatedEntities, meta };
+    return { items: entities, meta };
   }
 
   public getPageMeta(page: number, limit: number, totalItemCount: number): PageMetaDto {
