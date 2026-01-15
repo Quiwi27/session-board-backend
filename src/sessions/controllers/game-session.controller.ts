@@ -5,11 +5,12 @@ import { SessionResponseDto } from '../dtos/responses/session.response.dto';
 import { GetDecodedUser } from 'src/auth/decorators/get-decoded-user.decorator';
 import { DecodedJwtUserDto } from 'src/auth/dtos/decoded-jwt-user.dto';
 import { ParticipantResponseDto } from '../dtos/responses/participant.reponse.dto';
-import { ApiCookieAuth } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { PaginableRequestDto } from 'src/pagination/dtos/paginable.request.dto';
 import { PageDto } from 'src/pagination/dtos/page.dto';
 import { DashboardSessionResponseDto } from '../dtos/responses/dashboard-session.response.dto';
 
+@ApiTags('Game Sessions')
 @ApiCookieAuth()
 @Controller({
   version: '1',
