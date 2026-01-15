@@ -26,24 +26,25 @@ export class SessionService {
     const [sessions, totalCount] = await Promise.all([findAllPromise, findTotalCountPromise]);
 
     const dtos = sessions.map((session) => {
-      const playerCount = session.participants.length - 1;
-      const masterUser = session.participants.find((participant) => participant.role === 'MASTER')?.user;
-
-      const master = masterUser
-        ? {
-            id: masterUser.id,
-            name: masterUser.name,
-            email: masterUser.email,
-          }
-        : null;
+      const participants = session.participants.map((participant) => {
+        return {
+          id: participant.id,
+          sessionId: participant.sessionId,
+          role: participant.role,
+          user: {
+            id: participant.user.id,
+            name: participant.user.name,
+            email: participant.user.email,
+          },
+        };
+      });
 
       return {
         id: session.id,
         startDate: session.startDate,
         title: session.title,
         maxPlayers: session.maxPlayers,
-        playerCount,
-        master,
+        participants,
       };
     });
 

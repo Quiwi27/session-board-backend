@@ -5,6 +5,12 @@ export class DashboardSessionResponseDto {
   public startDate: Date;
   public title: string;
   public maxPlayers: number | null;
-  public playerCount: number;
-  public master: UserResponseDto | null;
+  public participants: DashboardParticipantSessionResponseDto[];
+}
+
+export class DashboardParticipantSessionResponseDto {
+  public id: string;
+  public sessionId: string;
+  public role: 'PLAYER' | 'MASTER';
+  public user: UserResponseDto;
 }
